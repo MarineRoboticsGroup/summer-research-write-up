@@ -35,10 +35,10 @@ The second paper we looked at was [Qualitatively Characterizing Neural Network O
 
 Before defining $\alpha (t)$ and $\beta (t)$, however, we must first define $\theta (t)$, $\theta _i$, and $\theta _f$. $\theta (t)$ is the stochastic gradient descent (SGD) trajectory at a time ${t}$, $\theta _i$ is the initialization point, and $\theta _f$ is the solution point.
 
-Next, we can define unit vectors ${v}$ and ${u}$.
+Next, we can define vectors ${v} (t)$ and ${u}$.
 
 $$
-{v} = \theta (t) - (\theta _i + \alpha (t){u})\\
+{v} (t) = \theta (t) - (\theta _i + \alpha (t){u})\\
 {u} = \theta _f - \theta _i
 $$
 
@@ -55,13 +55,97 @@ To fully understand how this parameterization works, we first had to get comfort
 
 ### **Getting Familiar with Linear Algebra**
 
-The level of traditional linear algebra needed to understand the above equations is low (thankfully!), so we got started with 3Blue1Brown's ["Essence of linear algebra"](https://www.youtube.com/watch?v=fNk_zzaMoSs&list=PLZHQObOWTQDPD3MizzM2xVFitgF8hE_ab) series on YouTube. It focuses on the mathematical meanings of things like vectors, matrices, and determinants, but doesn't go heavily into the computations.
+The level of traditional linear algebra needed to understand the above equations is low (thankfully!), so we got started with 3Blue1Brown's ["Essence of linear algebra"](https://www.youtube.com/watch?v=fNk_zzaMoSs&list=PLZHQObOWTQDPD3MizzM2xVFitgF8hE_ab) series on YouTube. It focuses on the mathematical meanings of things like vectors, matrices, and determinants, but doesn't go heavily into the computations. [ChatGPT](https://chat.openai.com) can also be super helpful when learning new topics, like linear algebra. 
 
-## **Learning Python**
+### **Next Steps**
 
-## **Matplotlib**
+Once we were able to visualize the above components (see diagram below), we decided to apply this math to SLAM optimization problems. Similarly to how it worked in neural nets, we can use $\alpha (t)$ and $\beta (t)$ to parameterize our objective function in order to visualize the loss landscape in a lower-dimensional space. 
+
+<div style = "text-align: center;">
+    <img src="goodfellow-drawing.png" alt="Goodfellow Math Diagram" width="300">
+</div>
+
+## **Learning the Tools**
+
+### **Python**
+
+To be able to code up the math from the Goodfellow paper, we first needed to learn Python. We both previously had exposure to C++ and are well-versed in Java, so learning Python was not overly difficult. The [MIT OCW Introduction To Computer Science and Programming in Python](https://ocw.mit.edu/courses/6-0001-introduction-to-computer-science-and-programming-in-python-fall-2016/pages/syllabus/) was helpful and we definitely recommend if you are also interested in learning Python. Other than that, we played around with the assignments for the course and worked on small personal projects (Chess, TicTacToe, etc) until we were comfortable with syntax, structure, and conventions in Python.
+
+For this project we used [VSCode](https://code.visualstudio.com/) as our editor and [Anaconda](https://www.anaconda.com/) to set up our environment. Our repo on GitHub can be found [here](https://github.com/MarineRoboticsGroup/visualizing-slam-optimization-problems). We used version 3.10.12 of Python.
+
+### **Matplotlib**
+
+The next tool we needed was a visualization library. We chose to use [Matplotlib](https://matplotlib.org/) for its simplicity and popularity as well as its integration with [NumPy](https://numpy.org/). We didn't do terribly much to get familiar with either library, as it is easy to learn what you need as you go. 
+
+We did however, make a fun bar graph shown below!
+
+<div style = "text-align: center";>
+    <img src="popular-prog-lang.png" alt="Bar Graph of Popular Programming Languages by Number of Developers" width = 400>
+</div>
+
+
+Either of the terminal commands below work to install Matplotlib.
+
+```python
+conda install matplotlib
+```
+
+```python
+pip install matplotlib
+```
+
+Same goes for the commands to install NumPy.
+
+```python
+conda install numpy
+```
+
+```python
+pip install numpy
+```
+
+## **SciPy Optimization**
+
+Our next step was to begin visualizing simple optimization problems using [SciPy](https://scipy.org/). Either of the terminal commands below should work for installation.
+
+```python
+conda install scipy
+```
+
+```python
+pip install scipy
+```
+
+### **2D Convex**
+
+The first basic problem we practiced with was the optimization of a 2D parabola. This was a good first problem since parabolas are convex and the global minimum is always the same as the vertex.
+
+The code is uninteresting, so we will just show the result below.
+
+<div style="text-align: center;">
+    <img src="2D-convex.png" alt="Graph of 2D Parabola with minimum" width = 400>
+</div>
+
+It should be no surprise that the red dot at the vertex of the parabola is also the minimum reached by [scipy.optimize.minimize](https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.minimize.html).
+
+### **3D Non-Convex**
+
+To ramp up the difficulty, we moved on to visualize a non-convex function with an optimization trajectory in three dimensions. The objective function is defined below.
+
+```python
+def non_convex(x):
+    return (x[0]**2 + x[1]**2) * np.cos(x[0])
+```
+
+The results are shown below. It is important to note that the red line is representative of the optimization trajectory.
+
+<div style = "text-align: center";>
+    <img src="3D-non-convex.png" alt="Non-Convex 3D plot with optimization trajectory" width = 400>
+</div>
 
 ## **Working on Manifolds**
+
+### **SLAM Manifolds**
 
 ### **What is a manifold?**
 
