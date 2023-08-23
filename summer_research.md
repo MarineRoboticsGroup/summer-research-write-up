@@ -4,7 +4,7 @@
 
 Our names are Abigail Greenough and Calvin Cigna and the summer before our senior year we interned with the [Marine Robotics Group](https://marinerobotics.mit.edu/). 
 
-This page is meant to serve as a summary of our work this summer as well as a jumping off point for future researchers.
+This page is intended to function as a summary of our accomplishments over the course of this summer, while also serving as a springboard for future researchers. As you peruse the content, you might find it beneficial to consult our repository on [GitHub](https://github.com/MarineRoboticsGroup/visualizing-slam-optimization-problems). Feel free to explore it for a more in-depth understanding or if you're seeking some light reading.
 
 ## **Our Supervisor**
 
@@ -67,26 +67,42 @@ The level of traditional linear algebra needed to understand the above equations
 
 ### **Geodesics**
 
-### **Projections & Retractions**
+### **Math On Manifolds**
 
 ### **Tangent Vector Space**
+
+### **Projections & Retractions**
+
 
 ## **Simple Sphere**
 
 ### **Tangent Plane**
 
 ### **Projecting Points**
+<div style ="text-align: center;">
+<img src="SphereWithTanSpace.png" width="375" height="375" />
+</div>
 
 ### **Sampling Points**
 
 ### **Plotting Objective Function**
+After failing to visulize the objective function with a surface composed of projected points, we decided to put in some extra work and visulize it as a surface. We made a meshgrids spanning the X and Y coordinates of the sphere, allowing us to access points and then find their cost functions. That cost is then assigned to the respective meshgrid containing the Z values for all of the XY coordinate pairs. Those points are then all plotted as one surface allowing us to visulize the cost as the trajectory moves accross the surface of the manifold.
+
+<div style="text-align: center;">
+<img src="LossLandscapeMerged.png" width="100%" height="100%" />
+</div>
 
 ### **Results**
 
+
 ## **Higher-Dimensional Sphere**
 
-### **Pymanopt**
+### **More Complex Data Sets** 
+After successfully plotting loss landscapes over 2-dimensional spheres, our next endeavor involved elevating the dimensionality of the sphere. This escalation in dimensionality aimed to amplify the complexity of the problem, rendering it more akin to that of SLAM datasets. Moreover, transitioning to 3 dimensions eliminated our capacity to visually represent the sphere under consideration, thereby necessitating a robust grasp of the mathematical and logical aspects of the problem.
 
+### **Pymanopt**
+To make it easier to work on higher-dimensional surfaces, we began to implement additional tools, namely  [Pymanopt](https://pymanopt.org/). Pymanopt is a tool for optimizing on selected manifolds and solving nonlinear problems. It contains functions that allowed us to simplify lots of our code or eliminate parts entirely. Additionally, Pymanopt includes optimizers that allow us to truly optimize on a surface instead of creating our own artificial trajectory. It serves as a useful tool to make our work more efficient and bring us closer to what optimizing SLAM problems would be like.
+ 
 ## **Conclusion**
 
 As we said before, none of this would have been possible with the support of Alan and the rest of Marine Robotics. Despite being high schoolers, we always felt like equals in the lab. For that, we are immensely grateful. If you take anything at all away from this post, let it be that the most amazing things happen when you are out of your comfort zone; so, try something new!
