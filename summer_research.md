@@ -4,7 +4,7 @@
 
 Our names are Abigail Greenough and Calvin Cigna and the summer before our senior year we interned with the [Marine Robotics Group](https://marinerobotics.mit.edu/). 
 
-This page is intended to function as a summary of our accomplishments over the course of this summer, while also serving as a springboard for future researchers. As you peruse the content, you might find it beneficial to consult our repository on [GitHub](https://github.com/MarineRoboticsGroup/ visualizing-slam-optimization-problems). Feel free to explore it for a more in-depth understanding or if you're interested in some light reading.
+This page is intended to function as a summary of our accomplishments over the course of this summer, while also serving as a springboard for future researchers. As you peruse the content, you might find it beneficial to consult our repository on [GitHub](https://github.com/MarineRoboticsGroup/visualizing-slam-optimization-problems). Feel free to explore it for a more in-depth understanding or if you're interested in some light reading.
 
 ## **Our Supervisor**
 
@@ -244,10 +244,48 @@ After failing to visualize the objective function with a surface composed of pro
 ## **Higher-Dimensional Sphere**
 
 ### **More Complex Data Sets** 
-After successfully plotting loss landscapes over 2-dimensional spheres, our next endeavor involved elevating the dimensionality of the sphere. This escalation in dimensionality aimed to amplify the complexity of the problem, rendering it more akin to that of SLAM datasets. Moreover, transitioning to 3 dimensions eliminated our capacity to visually represent the sphere under consideration, thereby necessitating a robust grasp of the mathematical and logical aspects of the problem.
+
+After successfully plotting loss landscapes over 2-dimensional spheres, our next endeavor involved elevating the dimensionality of the sphere. This escalation in dimensionality aimed to amplify the complexity of the problem, rendering it more akin to that of SLAM datasets. Moreover, transitioning to a 7-dimensional sphere eliminated our ability to visually represent the sphere under consideration, thereby necessitating a robust grasp of the mathematical and logical aspects of the problem.
 
 ### **Pymanopt**
+
 To make it easier to work on higher-dimensional surfaces, we began to implement additional tools, namely  [Pymanopt](https://pymanopt.org/). Pymanopt is a tool for optimizing on selected manifolds and solving nonlinear problems. It contains functions that allowed us to simplify lots of our code or eliminate parts entirely. Additionally, Pymanopt includes optimizers that allow us to truly optimize on a surface instead of creating our own artificial trajectory. It serves as a useful tool to make our work more efficient and bring us closer to what optimizing SLAM problems would be like.
+
+### **Convex Objective Function**
+
+The math from [Qualitatively Characterizing Neural Network Optimization Problems](https://arxiv.org/pdf/1412.6544.pdf) by Ian J. Goodfellow, Oriol Vinyals, and Andrew M. Saxe was now necessary to plot the objective function in terms of $\alpha (t)$ and $\beta (t)$. In this initial scenario with the 7-dimensional sphere, the Karcher Mean objective function was entirely convex. It is important to note, however, that even though the objective function is convex in this case, we are still working with a non-convex problem due to the geodesic convexity of the manifold. 
+
+Now we will define geodesic convexity and explain how it differs from traditional Euclidean convexity. This should make sense due to the difference in properties between manifolds and Euclidean spaces. Not surprisingly, geodesic convexity relates to the notion of convexity on Riemannian manifolds. Due to the curvature of these manifolds, convexity cannot be defined in the same way as it is in Euclidean space. A set ${S}$ on a Riemannian manifold is geodesically convex if the geodesic segement connecting any pair of points ${x}$ and ${y}$ in ${S}$, lies entirely in ${S}$. This concept is almost identical to how convexity is defined in Euclidean spaces, except it allows for the curvature of manifolds.
+
+The graphical results are shown below.
+
+<div style="text-align: center;">
+<img src="convex-obj.png" alt="Convex Objective Plot" width = 400>
+</div>
+
+Since the objective function is convex, the optimization trajectory strictly follows the gradients of the loss function to the global minimum. This results in no variation of $\beta (t)$ values and a clearly uninteresting graph. It should be concerning, however, that despite this still being a non-convex problem, the graph above is not an indicator of that. 
+
+### **Non-Convex Objective Function**
+
+Our next step was to introduce non-convexities to the objective function to create a graph more representative of the non-convex nature of the problem. After introducing these non-convexities, the optimization trajectory then had to navigate around obstacles, such as saddle points and local minima. The code that introduced such non-convexities is shown below.
+
+```python
+    # generates a random matrix to add to karcher mean to try to make it non-convex
+    mat_dim = self.manifold.random_point().shape[0]
+    rand_mat = np.random.rand(mat_dim, mat_dim)
+    rand_psd_mat = rand_mat @ rand_mat.T
+
+    nonconvex_cost = (x.T @ rand_psd_mat @ x)
+```
+
+```nonconvex_cost``` is then added to the Karcher mean at a given point to introduce the aforementioned non-convexities. The graphical results are shown below.
+
+<div style="text-align: center;">
+<img src="non-convex-obj.png" alt="Non-Convex Objective Plot" width = 400>
+</div>
  
+It is easy to see that once non-convexities are introduced to an objective function, both optimization and visualization are made much more difficult. This reinforces both the difficulty in our work this summer as well as the value in further developing a visualization tool for SLAM roboticists. 
+
 ## **Conclusion**
 As we said before, none of this would have been possible with the support of Alan and the rest of Marine Robotics. Despite being high schoolers, we always felt like equals in the lab. For that, we are immensely grateful. If you take anything at all away from this post, let it be that the most amazing things happen when you are out of your comfort zone; so, try something new!
+
