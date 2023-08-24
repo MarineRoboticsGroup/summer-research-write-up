@@ -4,7 +4,7 @@
 
 Our names are Abigail Greenough and Calvin Cigna and the summer before our senior year we interned with the [Marine Robotics Group](https://marinerobotics.mit.edu/). 
 
-This page is intended to function as a summary of our accomplishments over the course of this summer, while also serving as a springboard for future researchers. As you peruse the content, you might find it beneficial to consult our repository on [GitHub](https://github.com/MarineRoboticsGroup/visualizing-slam-optimization-problems). Feel free to explore it for a more in-depth understanding or if you're seeking some light reading.
+This page is intended to function as a summary of our accomplishments over the course of this summer, while also serving as a springboard for future researchers. As you peruse the content, you might find it beneficial to consult our repository on [GitHub](https://github.com/MarineRoboticsGroup/ visualizing-slam-optimization-problems). Feel free to explore it for a more in-depth understanding or if you're interested in some light reading.
 
 ## **Our Supervisor**
 
@@ -35,7 +35,7 @@ The second paper we looked at was [Qualitatively Characterizing Neural Network O
 
 Before defining $\alpha (t)$ and $\beta (t)$, however, we must first define $\theta (t)$, $\theta _i$, and $\theta _f$. $\theta (t)$ is the stochastic gradient descent (SGD) trajectory at a time ${t}$, $\theta _i$ is the initialization point, and $\theta _f$ is the solution point.
 
-Next, we can define vectors ${v} (t)$ and ${u}$.
+Next, we can define unit vectors ${v} (t)$ and ${u}$.
 
 $$
 {v} (t) = \theta (t) - (\theta _i + \alpha (t){u})\\
@@ -151,33 +151,95 @@ The results are shown below. It is important to note that the red line is repres
 
 ### **Geodesics**
 
-### **Math On Manifolds**
+## **Math On Manifolds**
+### **Quick Acknowledgements**
+The math required for the projections to and retractions from the tangent space is the work of [Nicolas Boumal](https://www.nicolasboumal.net/). Specifically his book, [An Tntroduction to Optimization on Smooth Manifolds](https://www.nicolasboumal.net/#book), was vital to our work. 
 
 ### **Tangent Vector Space**
 
-### **Projections & Retractions**
+$$
+Proj_x : \xi \rightarrow T_x S^{d-1} = \{v \in \xi : <x,v> = 0\}
+$$
 
+### **Projections**
+In order to project a point from a ${d}$ dimentional manifold into a ${d-1}$ dimentioanl tangent vector space, we needed to remove any similarity that the our given point has with the point difining the tnagent space. To do so, we take the inner product of the point we want to project, ${u}$, and the point that defines the vector space, ${x}$. We multiply it by ${x}$ to have it point in the same direction of the tangent space and then fianlly subtract that from the original point ${u}$. This removes any similarity that ${u}$ shared in the direction with ${x}$, therefore projecting it into the tangent space.
+
+$$
+Proj_x : \xi \rightarrow T_x S^{d-1} : u \mapsto Proj_x(u) = u \text{ }- <x,u>x
+$$
+
+
+### **Retractions**
+
+
+$$
+R_x(v) = {{x + v} \over \lVert x + v \rVert} = {{x + v} \over \sqrt {{1 + \lVert v \rVert}^2}}
+$$
 
 ## **Simple Sphere**
 
 ### **Tangent Plane**
 
+
 ### **Projecting Points**
+To project points onto the tangent plane, we employed the projection equation outlined in Boumal's work. As detailed in the section on Projections & Retractions, the projection of variable u (in this instance, the point in question) is achieved by subtracting any components that align with the vector defining the tangent plane. This process results in the point being projected onto the tangent plane. 
+ 
+
+```python
+projected_point = (point - np.dot(self.tangent_plane_origin_pt, point) * self.tangent_plane_origin_pt)
+```  
+<p>&nbsp;</p>
+However, when plotted, the projected point would appear within the sphere. This occurs because mathematically, the plane runs through the origin of the sphere. To compensate for this issue and make the point appear to be projected onto the plane tangent to the sphere, we add to the projected point the vector that defines the plane. This adjustment shifts the point outward, creating the illusion that it lies on the surface of the displayed plane.  
+
+```python
+return projected_point + self.tangent_plane_origin_pt
+```
+
+<p>&nbsp;</p>
+
 <div style ="text-align: center;">
 <img src="SphereWithTanSpace.png" width="375" height="375" />
 </div>
 
 ### **Sampling Points**
+While it was easy to sample points in three dimensions, we nevertheless decided to sample using $\alpha$ and $\beta$. This would make scaling the problem into higher dimensions easier later on. In order to sample points, we walked along the trajectory and added additional points by shifting up and down the $\alpha$ and $\beta$ vectors that defined the point we were on. This allowed us to sample points not only on the trajectory but around it as well, allowing us to create a landscape surrounding the trajectory, allowing us to understand the path that the optimizer took.
 
-### **Plotting Objective Function**
-After failing to visulize the objective function with a surface composed of projected points, we decided to put in some extra work and visulize it as a surface. We made a meshgrids spanning the X and Y coordinates of the sphere, allowing us to access points and then find their cost functions. That cost is then assigned to the respective meshgrid containing the Z values for all of the XY coordinate pairs. Those points are then all plotted as one surface allowing us to visulize the cost as the trajectory moves accross the surface of the manifold.
+```python
+sampled_point_on_sphere = (
+            self.alpha(index) + (shift * sign_alpha_shift))
+            * self.u + (self.beta(index) + (shift * sign_beta_shift)) * self.v(index)
+            sampled_point_on_plane = self.project_to_tan_plane(sampled_point_on_sphere)
+```
+
+### **Creating an Objective Function**
+In order to optimize across a surface, there needs to be an objective function that informs the optimizer about how efficient or inefficient certain paths are. Unfortunately, on our 2-dimensional sphere, there was no inherent cost function. To compensate for this, we devised our own using the Karcher mean. The Karcher mean is defined as follows:
+
+$$
+{m} = arg min \sum_{i=1}^N d^2 (p, x_i)
+$$
+
+* ${m}$ represents the Karcher mean, the point that minimizes the sum of squared distances<br>
+* ${p}$ is the reference point.<br>
+* ${x_i}$ represents the ${i}$-th point in the set<br>
+* ${d^2(p, x_i)}$ represents the squared distance between ${p}$ and ${x_i}$<br>
+* The ${arg min}$ notation denotes the argument that minimizes the given expression<br>
+
+The implementation of this in the program is below. It takes only one point at a time and squares the distances between the point we are trying to find the cost of and the three points used to define the optimization trajectory. The sum of these squared distances defines the cost of the function at that point.
+
+```python
+temp = (
+            (np.linalg.norm(point - pt_origin)) ** 2
+            + (np.linalg.norm(point - self.points_on_sphere[1])) ** 2
+            + (np.linalg.norm(point - self.points_on_sphere[2])) ** 2
+        )
+```
+
+### **Plotting the Objective Function**
+After failing to visualize the objective function with a surface composed of projected points, we decided to invest some extra effort and visualize it as a surface. We created mesh grids spanning the X and Y coordinates of the sphere, which enabled us to access points and subsequently determine their cost functions. This cost is then assigned to the respective meshgrid containing the Z values for all XY coordinate pairs. These points are then plotted as a single surface, enabling us to visualize the cost as the trajectory moves across the surface of the manifold. 
 
 <div style="text-align: center;">
-<img src="LossLandscapeMerged.png" width="100%" height="100%" />
+<img src="LossLandscapeMerged.png" width="70%" height="70%" />
 </div>
-
-### **Results**
-
 
 ## **Higher-Dimensional Sphere**
 
@@ -188,5 +250,4 @@ After successfully plotting loss landscapes over 2-dimensional spheres, our next
 To make it easier to work on higher-dimensional surfaces, we began to implement additional tools, namely  [Pymanopt](https://pymanopt.org/). Pymanopt is a tool for optimizing on selected manifolds and solving nonlinear problems. It contains functions that allowed us to simplify lots of our code or eliminate parts entirely. Additionally, Pymanopt includes optimizers that allow us to truly optimize on a surface instead of creating our own artificial trajectory. It serves as a useful tool to make our work more efficient and bring us closer to what optimizing SLAM problems would be like.
  
 ## **Conclusion**
-
 As we said before, none of this would have been possible with the support of Alan and the rest of Marine Robotics. Despite being high schoolers, we always felt like equals in the lab. For that, we are immensely grateful. If you take anything at all away from this post, let it be that the most amazing things happen when you are out of your comfort zone; so, try something new!
