@@ -144,14 +144,15 @@ The results are shown below. It is important to note that the red line is repres
 </div>
 
 ## **Vector Space vs Manifolds**
-talk about problem here
+
+At this point, we had acquired all of the necessary tools to be able to put our ideas into code. However, we still had one major issue. The Goodfellow math (mentioned above) that we were planning to replicate in SLAM optimization problems strictly applies to vector spaces, while SLAM optimization happens on manifolds. In order to implement the Goodfellow math, we needed a way to translate math on a manifold to math in a tangent vector space. 
 
 ### **What is a Vector Space**
 
 ### **What is a Manifold?**
 A manifold is a topological space where every point has a neighborhood that's homeomorphic to an open subset of Euclidean space. This means that while the space in its entirety might have a complex shape or curvature, focusing on a small section of it can make it appear flat at that point. Manifolds can have different levels of smoothness or differentiability, and there exist multiple different subsets, each with their own unique and specific properties.
 
-The subset of manifolds most relevant to our problem is a Lie group. A Lie group is a smooth manifold, meaning that they are differentiable across the entirety of their surface. Additionally, distance is preserved when projecting and retracting from vector spaces within a Lie group, and projections and retractions are inverse operations of one another. The relevance of these things will be explained later.
+The subset of manifolds most relevant to our problem is a Lie group. A Lie group is a smooth manifold, meaning that they are differentiable across the entirety of their surface. Additionally, distance is preserved when projecting and retracting from vector spaces within a Lie group, and projections and retractions are inverse operations of one another. The relevance of these properties will be explained later.
 
 ### **Geodesics**
 A geodesic is the shortest path between two points along curved surface or manifold. Geodesics can be thought of as the "straightest" paths on curved surfaces or within non-flat. In our problem the geodesic is used to show the optimal path for the optimization algorthm. While having a geodesic along the manifold is useful for visuilization, we are unable to utilize it for the math in our problem.
