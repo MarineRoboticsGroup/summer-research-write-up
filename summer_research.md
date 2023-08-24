@@ -251,6 +251,16 @@ After successfully plotting loss landscapes over 2-dimensional spheres, our next
 
 To make it easier to work on higher-dimensional surfaces, we began to implement additional tools, namely  [Pymanopt](https://pymanopt.org/). Pymanopt is a tool for optimizing on selected manifolds and solving nonlinear problems. It contains functions that allowed us to simplify lots of our code or eliminate parts entirely. Additionally, Pymanopt includes optimizers that allow us to truly optimize on a surface instead of creating our own artificial trajectory. It serves as a useful tool to make our work more efficient and bring us closer to what optimizing SLAM problems would be like.
 
+Either of the terminal commands below work to install Pymanopt.
+
+```python
+conda install pymanopt
+```
+
+```python
+pip install pymanopt
+```
+
 ### **Convex Objective Function**
 
 The math from [Qualitatively Characterizing Neural Network Optimization Problems](https://arxiv.org/pdf/1412.6544.pdf) by Ian J. Goodfellow, Oriol Vinyals, and Andrew M. Saxe was now necessary to plot the objective function in terms of $\alpha (t)$ and $\beta (t)$. In this initial scenario with the 7-dimensional sphere, the Karcher Mean objective function was entirely convex. It is important to note, however, that even though the objective function is convex in this case, we are still working with a non-convex problem due to the geodesic convexity of the manifold. 
@@ -267,7 +277,7 @@ Since the objective function is convex, the optimization trajectory strictly fol
 
 ### **Non-Convex Objective Function**
 
-Our next step was to introduce non-convexities to the objective function to create a graph more representative of the non-convex nature of the problem. After introducing these non-convexities, the optimization trajectory then had to navigate around obstacles, such as saddle points and local minima. The code that introduced such non-convexities is shown below.
+Our next step was to introduce non-convexities to the objective function to create a graph more representative of the non-convex nature of nthe After introducing non-convexities to the objective function, the optimization trajectory now has to navigate around obstacles, such as saddle points and local minima. The code that introduced non-convexities is shown below.
 
 ```python
     # generates a random matrix to add to karcher mean to try to make it non-convex
