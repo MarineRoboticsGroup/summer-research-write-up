@@ -143,26 +143,33 @@ The results are shown below. It is important to note that the red line is repres
     <img src="3D-non-convex.png" alt="Non-Convex 3D plot with optimization trajectory" width = 400>
 </div>
 
-## **Working on Manifolds**
+## **Vector Space vs Manifolds**
+talk about problem here
 
-### **SLAM Manifolds**
+### **What is a Vector Space**
 
-### **What is a manifold?**
+
+### **What is a Manifold?**
+A manifold is a topological space where every point has a neighborhood that's homeomorphic to an open subset of Euclidean space. This means that while the space in its entirety might have a complex shape or curvature, focusing on a small section of it can make it appear flat at that point. Manifolds can have different levels of smoothness or differentiability, and there exist multiple different subsets, each with their own unique and specific properties.
+
+The subset of manifolds most relevant to our problem is a Lie group. A Lie group is a smooth manifold, meaning that they are differentiable across the entirety of their surface. Additionally, distance is preserved when projecting and retracting from vector spaces within a Lie group, and projections and retractions are inverse operations of one another. The relevance of these things will be explained later.
 
 ### **Geodesics**
+A geodesic is the shortest path between two points along curved surface or manifold. Geodesics can be thought of as the "straightest" paths on curved surfaces or within non-flat. In our problem the geodesic is used to show the optimal path for the optimization algorthm. While having a geodesic along the manifold is useful for visuilization, we are unable to utilize it for the math in our problem.
 
 ## **Math On Manifolds**
 ### **Quick Acknowledgements**
 The math required for the projections to and retractions from the tangent space is the work of [Nicolas Boumal](https://www.nicolasboumal.net/). Specifically his book, [An Tntroduction to Optimization on Smooth Manifolds](https://www.nicolasboumal.net/#book), was vital to our work. 
 
 ### **Tangent Vector Space**
+NEED TO ADD STUFF HERE
 
 $$
 Proj_x : \xi \rightarrow T_x S^{d-1} = \{v \in \xi : <x,v> = 0\}
 $$
 
 ### **Projections**
-In order to project a point from a ${d}$ dimentional manifold into a ${d-1}$ dimentioanl tangent vector space, we needed to remove any similarity that the our given point has with the point difining the tnagent space. To do so, we take the inner product of the point we want to project, ${u}$, and the point that defines the vector space, ${x}$. We multiply it by ${x}$ to have it point in the same direction of the tangent space and then fianlly subtract that from the original point ${u}$. This removes any similarity that ${u}$ shared in the direction with ${x}$, therefore projecting it into the tangent space.
+In order to project a point from a ${d}$-dimensional manifold into a ${d-1}$-dimensional tangent vector space, we needed to remove any similarity that the given point has with the point defining the tangent space. To do so, we take the inner product of the point we want to project, ${u}$, and the point that defines the vector space, ${x}$. We multiply it by ${x}$ to have it point in the same direction as the tangent space, and then finally subtract that from the original point ${u}$. This removes any similarity that ${u}$ shares in direction with ${x}$, therefore projecting it into the tangent space. The math describing this process is described below.
 
 $$
 Proj_x : \xi \rightarrow T_x S^{d-1} : u \mapsto Proj_x(u) = u \text{ }- <x,u>x
@@ -170,17 +177,18 @@ $$
 
 
 ### **Retractions**
-
+Retractions are useful for being able to visualize the trajectory over the manifold, as opposed to viewing it in the tangent space where much of the manifold's complexity is lost. To retract a point back onto the manifold, we need to decrease the magnitude of the vector defining the projected point. To do so, we divide the sum of the point $v$ and the point defining the tangent space $x$ by the two-norm of their sum. Doing so decreases the magnitude of the vector, retracting it back to the surface of the manifold.
 
 $$
 R_x(v) = {{x + v} \over \lVert x + v \rVert} = {{x + v} \over \sqrt {{1 + \lVert v \rVert}^2}}
 $$
 
+### **Funky Shifting with Spheres**
+As we began whiteboarding possible projections and retractions, we quickly realized two significant problems when working on a sphere. Firstly, multiple points along the surface of the sphere can yield the same projection. For example, if you project two points from a sphere centered at the origin with the same X and Y values but opposite Z values, the points will be projected into the same position. Secondly, distances are not preserved when projected into the vector space. The distance following the geodesic on the manifold will always be greater than the same path in vector space. This is due to the geodesic working in additional dimensions and therefore having to move across additional space.
+
+Fortunately, in Lie groups, both these issues are addressed due to the group's unique properties. In Lie groups, projections and retractions are inverse operations, meaning that each set of projection and retraction are reciprocals of one another. This prevents two points from being projected to the same location or two retractions from being at the same point on a manifold. Additionally, distance is always preserved, so the path along the geodesic is the same length as the path taken in the tangent space.
+
 ## **Simple Sphere**
-
-### **Tangent Plane**
-
-
 ### **Projecting Points**
 To project points onto the tangent plane, we employed the projection equation outlined in Boumal's work. As detailed in the section on Projections & Retractions, the projection of variable u (in this instance, the point in question) is achieved by subtracting any components that align with the vector defining the tangent plane. This process results in the point being projected onto the tangent plane. 
  
@@ -215,14 +223,14 @@ sampled_point_on_sphere = (
 In order to optimize across a surface, there needs to be an objective function that informs the optimizer about how efficient or inefficient certain paths are. Unfortunately, on our 2-dimensional sphere, there was no inherent cost function. To compensate for this, we devised our own using the Karcher mean. The Karcher mean is defined as follows:
 
 $$
-{m} = arg min \sum_{i=1}^N d^2 (p, x_i)
+{m} = arg\text{ }min \sum_{i=1}^N d^2 (p, x_i)
 $$
 
 * ${m}$ represents the Karcher mean, the point that minimizes the sum of squared distances<br>
 * ${p}$ is the reference point.<br>
 * ${x_i}$ represents the ${i}$-th point in the set<br>
 * ${d^2(p, x_i)}$ represents the squared distance between ${p}$ and ${x_i}$<br>
-* The ${arg min}$ notation denotes the argument that minimizes the given expression<br>
+* The ${arg\text{ }min}$ notation denotes the argument that minimizes the given expression<br>
 
 The implementation of this in the program is below. It takes only one point at a time and squares the distances between the point we are trying to find the cost of and the three points used to define the optimization trajectory. The sum of these squared distances defines the cost of the function at that point.
 
@@ -248,6 +256,16 @@ After successfully plotting loss landscapes over 2-dimensional spheres, our next
 
 ### **Pymanopt**
 To make it easier to work on higher-dimensional surfaces, we began to implement additional tools, namely  [Pymanopt](https://pymanopt.org/). Pymanopt is a tool for optimizing on selected manifolds and solving nonlinear problems. It contains functions that allowed us to simplify lots of our code or eliminate parts entirely. Additionally, Pymanopt includes optimizers that allow us to truly optimize on a surface instead of creating our own artificial trajectory. It serves as a useful tool to make our work more efficient and bring us closer to what optimizing SLAM problems would be like.
+
+Either of the terminal commands below work to install Pymanopt.
+
+```python
+conda install pymanopt
+```
+
+```python
+pip install pymanopt
+```
  
 ## **Conclusion**
 As we said before, none of this would have been possible with the support of Alan and the rest of Marine Robotics. Despite being high schoolers, we always felt like equals in the lab. For that, we are immensely grateful. If you take anything at all away from this post, let it be that the most amazing things happen when you are out of your comfort zone; so, try something new!
