@@ -145,6 +145,10 @@ The results are shown below. It is important to note that the red line is repres
 
 ## **Vector Space vs Manifolds**
 
+At this point, we had acquired all of the necessary tools to be able to put our ideas into code. However, we still had one major issue. The Goodfellow math (mentioned above) that we were planning to replicate in SLAM optimization problems strictly applies to vector spaces, while SLAM optimization happens on manifolds. In order to implement the Goodfellow math, we needed a way to translate math on a manifold to math in a tangent vector space. 
+
+### **What is a Vector Space**
+
 ### **What is a Manifold?**
 A manifold is a topological space where every point has a neighborhood that's homeomorphic to an open subset of Euclidean space. This means that while the space in its entirety might have a complex shape or curvature, focusing on a small section of it can make it appear flat at that point. Manifolds can have different levels of smoothness or differentiability, and there exist multiple different subsets, each with their own unique and specific properties.
 
