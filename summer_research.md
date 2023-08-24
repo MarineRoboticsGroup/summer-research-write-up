@@ -144,23 +144,24 @@ The results are shown below. It is important to note that the red line is repres
 </div>
 
 ## **Vector Space vs Manifolds**
-talk about problem here
-
-### **What is a Vector Space**
 
 ### **What is a Manifold?**
 A manifold is a topological space where every point has a neighborhood that's homeomorphic to an open subset of Euclidean space. This means that while the space in its entirety might have a complex shape or curvature, focusing on a small section of it can make it appear flat at that point. Manifolds can have different levels of smoothness or differentiability, and there exist multiple different subsets, each with their own unique and specific properties.
 
-The subset of manifolds most relevant to our problem is a Lie group. A Lie group is a smooth manifold, meaning that they are differentiable across the entirety of their surface. Additionally, distance is preserved when projecting and retracting from vector spaces within a Lie group, and projections and retractions are inverse operations of one another. The relevance of these things will be explained later.
+The subset of manifolds most relevant to our problem is a Lie group. A Lie group is a smooth manifold, meaning that they are differentiable across the entirety of their surface. Additionally, distance is preserved when projecting and retracting from vector spaces within a Lie group, and projections and retractions are inverse operations of one another. The relevance of these properties will be explained later.
+
+### **What is a Vector Space?**
+For our problem a vector space is a ${d-1}$-dimensional space where ${d}$ is the dimentionality of the manifold. The vector space consitts of vectors and operates in the same way a normal euclidian space would. This allows us to circumvent mathmatical issues and complexities that occur when computing on manifolds. 
 
 ### **Geodesics**
 A geodesic is the shortest path between two points along curved surface or manifold. Geodesics can be thought of as the "straightest" paths on curved surfaces or within non-flat. In our problem the geodesic is used to show the optimal path for the optimization algorthm. While having a geodesic along the manifold is useful for visuilization, we are unable to utilize it for the math in our problem.
 
 ## **Math On Manifolds**
 ### **Quick Acknowledgements**
-The math required for the projections to and retractions from the tangent space is the work of [Nicolas Boumal](https://www.nicolasboumal.net/). Specifically his book, [An Tntroduction to Optimization on Smooth Manifolds](https://www.nicolasboumal.net/#book), was vital to our work. 
+The math required for the projections to and retractions from the tangent space is the work of [Nicolas Boumal](https://www.nicolasboumal.net/). Specifically his book, [An Introduction to Optimization on Smooth Manifolds](https://www.nicolasboumal.net/#book), was vital to our work. 
 
 ### **Tangent Vector Space**
+To generate a vector space and work with the euclidian rules, we need to define a vector space tangent to our ${d}$-dimentional manifold. The vector space is defined by the point that begines the optimization trajectory and is tangent to the manifold at that point. As stated in the math below the ${d}$-dimentional tangent space is defined by point ${x}$. The inner product of ${x}$ and any point ${v}$ that is on the manifold manifold $\xi$, is zero meaning the points are orthognal.
 
 $$
 Proj_x : \xi \rightarrow T_x S^{d-1} = \{v \in \xi : <x,v> = 0\}
