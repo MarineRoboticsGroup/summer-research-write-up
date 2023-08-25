@@ -2,7 +2,7 @@
 
 ## **Introduction**
 
-Our names are Abigail Greenough and Calvin Cigna, and the summer before our senior year, we interned with the [Marine Robotics Group](https://marinerobotics.mit.edu/) at [MIT CSAIL](https://www.csail.mit.edu/). 
+Our names are [Abigail Greenough](https://www.linkedin.com/in/abigail-greenough-7a56331a9) and [Calvin Cigna](https://www.linkedin.com/in/calvin-cigna-b4b6a6280), and the summer before our senior year, we interned with the [Marine Robotics Group](https://marinerobotics.mit.edu/) at [MIT CSAIL](https://www.csail.mit.edu/). 
 
 This page is intended to function as a summary of our accomplishments over the course of this summer, while also serving as a springboard for future researchers. As you peruse the content, you might find it beneficial to consult our repository on [GitHub](https://github.com/MarineRoboticsGroup/visualizing-slam-optimization-problems). Feel free to explore it for a more in-depth understanding or if you're interested in some light reading.
 
@@ -12,7 +12,7 @@ We had the privilege of working under [Alan Papalia](https://alanpapalia.github.
 
 ## **The Problem**
 
-### **SLAM Robotics**
+### **What is SLAM?**
 
 Simultaneous Localization and Mapping (SLAM) is a problem in robotics, where an autonomous vehicle must create a map of an unknown environment while also keeping track of its location in the environment. 
 
@@ -165,14 +165,14 @@ The math required for the projections to and retractions from the tangent space 
 To generate a vector space and work with Euclidean rules, we need to define a vector space tangent to our ${d}$-dimensional manifold. The vector space is defined by the point that begins the optimization trajectory, and the plane is made tangent to the manifold at that point. As stated in the math below, the ${d}$-dimensional tangent space is defined by the point ${x}$. The inner product of ${x}$ and any point ${v}$ that is on the manifold $\xi$ is zero, meaning the points are orthogonal.
 
 $$
-Proj_x : \xi \rightarrow T_x S^{d-1} = \{v \in \xi : <x,v> = 0\}
+Proj_x : \xi \rightarrow T_x \mathcal{M}^{d-1} = \{v \in \xi : <x,v> = 0\}
 $$
 
 ### **Projections**
 To project a point from a ${d}$-dimensional manifold onto a ${d-1}$-dimensional tangent vector space, we needed to remove any similarity that the given point has with the point defining the tangent space. To do so, we take the inner product of the point we want to project, ${u}$, and the point that defines the vector space, ${x}$. We multiply the inner product by ${x}$ to point in the direction of the tangent space, and then finally subtract that from the original point ${u}$. This removes any similarity that ${u}$ shares in the direction of ${x}$, thereby projecting it onto the tangent space. The math describing this process is provided below.
 
 $$
-Proj_x : \xi \rightarrow T_x S^{d-1} : u \mapsto Proj_x(u) = u \text{ }- <x,u>x
+Proj_x : \xi \rightarrow T_x \mathcal{M}^{d-1} : u \mapsto Proj_x(u) = u \text{ }- <x,u>x
 $$
 
 
@@ -274,7 +274,7 @@ pip install pymanopt
 
 The math from [Qualitatively Characterizing Neural Network Optimization Problems](https://arxiv.org/pdf/1412.6544.pdf) by Ian J. Goodfellow, Oriol Vinyals, and Andrew M. Saxe was now necessary to plot the objective function in terms of $\alpha (t)$ and $\beta (t)$. In this initial scenario with the 7-dimensional sphere, the Karcher Mean objective function was entirely convex. It is important to note, however, that even though the objective function is convex in this case, we are still working with a non-convex problem due to the geodesic convexity of the manifold.
 
-It is important to define geodesic convexity and explain how it differs from traditional Euclidean convexity. Geodesic convexity relates to the notion of convexity on Riemannian manifolds. Due to the curvature of these manifolds, convexity cannot be defined in the same way as it is in Euclidean space. A set ${S}$ on a Riemannian manifold is geodesically convex if the geodesic segment connecting any pair of points ${x}$ and ${y}$ in ${S}$ lies entirely in ${S}$. This concept is almost identical to how convexity is defined in Euclidean spaces, except it allows for the curvature of manifolds.
+It is important to define geodesic convexity and explain how it differs from traditional Euclidean convexity. Geodesic convexity relates to the notion of convexity on Riemannian manifolds. Due to the curvature of these manifolds, convexity cannot be defined in the same way as it is in Euclidean space. A set $\mathcal{M}$ on a Riemannian manifold is geodesically convex if the geodesic segment connecting any pair of points ${x}$ and ${y}$ in $\mathcal{M}$ lies entirely in $\mathcal{M}$. This concept is almost identical to how convexity is defined in Euclidean spaces, except it allows for the curvature of manifolds.
 
 The graphical results are shown below.
 
